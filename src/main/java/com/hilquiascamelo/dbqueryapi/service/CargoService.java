@@ -7,6 +7,8 @@ import com.hilquiascamelo.dbqueryapi.repository.CargoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -19,6 +21,7 @@ import java.util.List;
 
 @Service
 public class CargoService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CargoService.class );
     public CargoService ( CargoRepository cargoRepository ) {
         this.cargoRepository = cargoRepository;
     }
@@ -29,17 +32,25 @@ public class CargoService {
         return cargoRepository.saveAll ( cargos );
     }
 
-    public List < Cargo > getCargoList ( ) {
-        return cargoRepository.getCargoList ( );
+    public Page <Cargo> getCargoList ( Pageable pageable ) {
+        return cargoRepository.getCargoList (pageable );
 
     }
 
-    public Cargo  putCargo ( Cargo cargos ,  Integer id  ) {
+
+    public Cargo getCargo ( Integer id ) throws CargoNotFoundException {
+        if (!existsById(id)) {
+            throw new CargoNotFoundException("ID do cargo não encontrado: ", id);
+        }
+        return cargoRepository.getCargo ( id );
+    }
+    public Cargo  putCargo ( Cargo cargos ,  Integer id  ) throws CargoNotFoundException {
+        if (!existsById(id)) {
+            throw new CargoNotFoundException("ID do cargo não encontrado: ", id);
+        }
+
         return cargoRepository.putCargo(cargos, id);
     }
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(CargoService.class );
-
 
 
     @PersistenceContext

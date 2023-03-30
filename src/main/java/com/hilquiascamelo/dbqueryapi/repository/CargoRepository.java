@@ -6,6 +6,9 @@ import com.hilquiascamelo.dbqueryapi.exceptions.CargoReferencedException;
 import com.hilquiascamelo.dbqueryapi.service.CargoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
@@ -48,16 +51,32 @@ public class CargoRepository {
         return sortedCargos;
     }
 
-    public List < Cargo > getCargoList ( ) {
+    public Page <Cargo> getCargoList ( Pageable pageable ) {
 
-        List < Cargo >
-                sortedCargos =
-                entityManager.createNativeQuery( "SELECT id_cargo, ativo, descricao, ordem, sigla" +
-                                                 " FROM cargo ORDER BY id_cargo ASC" , Cargo.class )
-                        .getResultList( );
+        String countQuery = "SELECT count(c) FROM Cargo c";
+        TypedQuery<Long> countQueryResult = entityManager.createQuery(countQuery, Long.class);
+        Long countResult = countQueryResult.getSingleResult();
 
-        return sortedCargos;
+        String selectQuery = "SELECT c FROM Cargo c";
+        TypedQuery<Cargo> selectQueryResult = entityManager.createQuery(selectQuery, Cargo.class);
+        selectQueryResult.setFirstResult((int) pageable.getOffset());
+        selectQueryResult.setMaxResults(pageable.getPageSize());
+        List<Cargo> cargos = selectQueryResult.getResultList();
 
+        return new PageImpl <>(cargos, pageable, countResult);
+    }
+
+
+    public Cargo getCargo(Integer id) throws CargoNotFoundException {
+        String sql = "SELECT id_cargo, ativo, descricao, ordem, sigla FROM cargo WHERE id_cargo = :id";
+        Query query = entityManager.createNativeQuery(sql, Cargo.class);
+        query.setParameter("id", id);
+        List<Cargo> results = query.getResultList();
+        if (!results.isEmpty()) {
+            return results.get(0);
+        } else {
+            throw new CargoNotFoundException("ID do cargo não encontrado: ", id);
+        }
     }
 
     public Cargo putCargo ( Cargo cargo , Integer id ) {

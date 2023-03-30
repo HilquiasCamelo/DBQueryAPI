@@ -5,15 +5,14 @@ import com.hilquiascamelo.dbqueryapi.exceptions.CargoNotFoundException;
 import com.hilquiascamelo.dbqueryapi.exceptions.CargoReferencedException;
 import com.hilquiascamelo.dbqueryapi.service.CargoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.ws.rs.DELETE;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Response;
+
 import java.util.List;
 
 @Controller
@@ -22,39 +21,50 @@ public class CargoController {
 
     @Autowired private CargoService cargoService;
 
-    @PostMapping ("/cargo")
-    @ResponseBody
-    public Response saveAll (@RequestBody List<Cargo> cargos) {
-        List<Cargo> savedCargos = cargoService.saveCargo(cargos);
-        return Response.status(Response.Status.OK).entity(savedCargos).build();
+    @PostMapping ("/cargo") @ResponseBody public ResponseEntity < List < Cargo > > saveAll (
+            @RequestBody List < Cargo > cargos ) {
+        List < Cargo > savedCargos = cargoService.saveCargo( cargos );
+        return ResponseEntity.ok( savedCargos );
     }
 
     @GetMapping ("/cargo")
     @ResponseBody
-    public Response getAll () {
-        List<Cargo> listOfCargos = cargoService.getCargoList();
-        return Response.status(Response.Status.OK).entity(listOfCargos).build();
+    public ResponseEntity<Page<Cargo>> getAll(Pageable pageable) {
+        Page <Cargo> pageOfCargos = cargoService.getCargoList(pageable );
+        return ResponseEntity.ok().body(pageOfCargos);
     }
 
-    @PutMapping ("/cargo")
+    @GetMapping("/cargo/{id}")
     @ResponseBody
-    public Response putAll (@RequestBody Cargo cargo, Integer id) {
-        Cargo updatedCargo = cargoService.putCargo(cargo, id);
-        return Response.status(Response.Status.OK).entity(updatedCargo).build();
-    }
-
-    @DeleteMapping ("/cargo/{id}")
-    @ResponseBody
-    public ResponseEntity<String> deleteCargo(@PathVariable int id) {
+    public ResponseEntity<Object> getById(@PathVariable int id) {
         try {
-            cargoService.deleteCargo(id);
-            return ResponseEntity.ok("Cargo deleted successfully");
-        } catch ( CargoReferencedException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body("Não é possível excluir o cargo porque ele é referenciado em outras tabelas.");
-        } catch (Exception e) {
+            Cargo cargo = cargoService.getCargo(id);
+            return ResponseEntity.ok().body(cargo);
+        } catch(Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(e.getMessage());
         }
     }
+
+    @PutMapping ("/cargo/{id}") @ResponseBody public ResponseEntity < Cargo > putAll (
+            @RequestBody Cargo cargo , @PathVariable Integer id ) throws CargoNotFoundException {
+        Cargo updatedCargo = cargoService.putCargo( cargo , id );
+        return ResponseEntity.ok( )
+                .body( updatedCargo );
+
+    }
+
+    @DeleteMapping ("/cargo/{id}") @ResponseBody public ResponseEntity < String > deleteCargo ( @PathVariable int id ) {
+        try {
+            cargoService.deleteCargo( id );
+            return ResponseEntity.ok( "Cargo deleted successfully" );
+        } catch( CargoReferencedException e ) {
+            return ResponseEntity.status( HttpStatus.CONFLICT )
+                    .body( "Não é possível excluir o cargo porque ele é referenciado em outras tabelas." );
+        } catch( Exception e ) {
+            return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR )
+                    .body( e.getMessage( ) );
+        }
+    }
+
 }
