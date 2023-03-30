@@ -6,6 +6,7 @@ import com.hilquiascamelo.dbqueryapi.exceptions.CargoReferencedException;
 import com.hilquiascamelo.dbqueryapi.service.CargoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.server.ResponseStatusException;
@@ -82,52 +83,11 @@ public class CargoRepository {
 
         return querySelect;
     }
-    private static final Logger LOGGER = LoggerFactory.getLogger( CargoService.class );
-    public int deleteCargo(Integer id) {
-        try {
-            if (existsById(id)) {
-                if (isCargoReferenced(id)) {
-                    throw new CargoReferencedException("Não é possível excluir o cargo porque ele é referenciado em outras tabelas.");
-                }
-                String sql = "DELETE FROM cargo WHERE id_cargo = :id";
-                Query query = entityManager.createNativeQuery(sql);
-                query.setParameter("id", Long.valueOf(id)); // Converter para Long
-                int rowsDeleted = query.executeUpdate();
-                return rowsDeleted;
-            } else {
-                throw new CargoNotFoundException("ID do cargo não encontrado: " , id);
-            }
-        } catch (CargoNotFoundException e) {
-            LOGGER.error("Erro ao excluir cargo: " + e.getMessage());
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        } catch (CargoReferencedException e) {
-            LOGGER.error("Erro ao excluir cargo: " + e.getMessage());
-            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
-        } catch (Exception e) {
-            LOGGER.error("Erro ao excluir cargo: " + e.getMessage());
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, " - Ocorreu um erro ao excluir o cargo");
-        }
-    }
-
-
-    private boolean isCargoReferenced(Integer id) {
-        TypedQuery<Long> query = entityManager.createQuery("SELECT COUNT(*) FROM Pessoa  WHERE oid_cargo_quadro_sgp = :id", Long.class);
+    public Integer deleteCargo(Integer id) {
+        String sql = "DELETE FROM cargo WHERE id_cargo = :id";
+        Query query = entityManager.createNativeQuery(sql);
         query.setParameter("id", id);
-
-        Long count = query.getSingleResult();
-        boolean exists = count > 0;
-        LOGGER.debug("isCargoReferenced: id={}, exists={}, count={}, query={}", id, exists, count, query);
-        return exists;
-    }
-
-    public boolean existsById(Integer id) {
-        TypedQuery<Long> query = entityManager.createQuery("SELECT COUNT(*) FROM Cargo WHERE id_cargo = :id", Long.class);
-        query.setParameter("id", id.longValue());
-
-        Long count = query.getSingleResult();
-        boolean exists = count > 0;
-        LOGGER.debug("existsById: id={}, exists={}, count={}, query={}", id, exists, count, query);
-        return exists;
+        return query.executeUpdate();
     }
 }
 
