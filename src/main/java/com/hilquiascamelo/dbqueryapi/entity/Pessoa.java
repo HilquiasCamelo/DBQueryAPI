@@ -1,7 +1,6 @@
 package com.hilquiascamelo.dbqueryapi.entity;
 
 import javax.persistence.*;
-
 import java.time.LocalDate;
 
 

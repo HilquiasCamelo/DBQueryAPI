@@ -1,7 +1,7 @@
 package com.hilquiascamelo.dbqueryapi.service;
 
 import com.hilquiascamelo.dbqueryapi.entity.Cargo;
-import com.hilquiascamelo.dbqueryapi.exceptions.CargoNotFoundException;
+import com.hilquiascamelo.dbqueryapi.exceptions.NotFoundException;
 import com.hilquiascamelo.dbqueryapi.exceptions.CargoReferencedException;
 import com.hilquiascamelo.dbqueryapi.repository.CargoRepository;
 import org.slf4j.Logger;
@@ -16,7 +16,6 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -38,15 +37,15 @@ public class CargoService {
     }
 
 
-    public Cargo getCargo ( Integer id ) throws CargoNotFoundException {
+    public Cargo getCargo ( Integer id ) throws NotFoundException {
         if (!existsById(id)) {
-            throw new CargoNotFoundException("ID do cargo não encontrado: ", id);
+            throw new NotFoundException("ID do cargo não encontrado: ", id);
         }
         return cargoRepository.getCargo ( id );
     }
-    public Cargo  putCargo ( Cargo cargos ,  Integer id  ) throws CargoNotFoundException {
+    public Cargo  putCargo ( Cargo cargos ,  Integer id  ) throws NotFoundException {
         if (!existsById(id)) {
-            throw new CargoNotFoundException("ID do cargo não encontrado: ", id);
+            throw new NotFoundException("ID do cargo não encontrado: ", id);
         }
 
         return cargoRepository.putCargo(cargos, id);
@@ -64,9 +63,9 @@ public class CargoService {
                 }
                 return cargoRepository.deleteCargo(id);
             } else {
-                throw new CargoNotFoundException("ID do cargo não encontrado: ", id);
+                throw new NotFoundException("ID do cargo não encontrado: ", id);
             }
-        } catch ( CargoNotFoundException e) {
+        } catch ( NotFoundException e) {
             LOGGER.error("Erro ao excluir cargo: " + e.getMessage());
             throw new ResponseStatusException( HttpStatus.NOT_FOUND, e.getMessage( ));
         } catch ( CargoReferencedException e) {

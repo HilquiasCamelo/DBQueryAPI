@@ -1,32 +1,25 @@
 package com.hilquiascamelo.dbqueryapi.repository;
 
 import com.hilquiascamelo.dbqueryapi.entity.Cargo;
-import com.hilquiascamelo.dbqueryapi.exceptions.CargoNotFoundException;
-import com.hilquiascamelo.dbqueryapi.exceptions.CargoReferencedException;
-import com.hilquiascamelo.dbqueryapi.service.CargoService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.hilquiascamelo.dbqueryapi.exceptions.NotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
-import java.math.BigInteger;
 import java.util.List;
 
 @Repository
 @Transactional
 public class CargoRepository {
 
-    @PersistenceContext private EntityManager entityManager;
+    @PersistenceContext
+    private EntityManager entityManager;
     private int rowsDeleted;
 
     public List < Cargo > saveAll ( List < Cargo > cargos ) {
@@ -67,7 +60,7 @@ public class CargoRepository {
     }
 
 
-    public Cargo getCargo(Integer id) throws CargoNotFoundException {
+    public Cargo getCargo(Integer id) throws NotFoundException {
         String sql = "SELECT id_cargo, ativo, descricao, ordem, sigla FROM cargo WHERE id_cargo = :id";
         Query query = entityManager.createNativeQuery(sql, Cargo.class);
         query.setParameter("id", id);
@@ -75,7 +68,7 @@ public class CargoRepository {
         if (!results.isEmpty()) {
             return results.get(0);
         } else {
-            throw new CargoNotFoundException("ID do cargo não encontrado: ", id);
+            throw new NotFoundException("ID do cargo não encontrado: ", id);
         }
     }
 
