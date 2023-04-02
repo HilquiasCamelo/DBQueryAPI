@@ -1,9 +1,9 @@
 package com.hilquiascamelo.dbqueryapi.config;
 
-
 import com.hilquiascamelo.dbqueryapi.security.JWTAuthenticationFilter;
 import com.hilquiascamelo.dbqueryapi.security.JWTAuthorizationFilter;
 import com.hilquiascamelo.dbqueryapi.security.JWTUtil;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +14,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -23,15 +24,10 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
 
-/**
- * security config
- */
-
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity ( prePostEnabled = true)
-public class SecurityConfig extends WebSecurityConfigurerAdapter
-    {
+@EnableGlobalMethodSecurity(prePostEnabled = true)
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private UserDetailsService userDetailsService;
@@ -42,65 +38,45 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
     @Autowired
     private JWTUtil jwtUtil;
 
-    private static final String[] PUBLIC_MATCHERS = {"/h2-console/**, /login/**"};
-
-    private static final String[] PUBLIC_MATCHERS_GET =
-            {"/cargos/**" ,};
-
-    private static final String[] PUBLIC_MATCHERS_POST = {"/users/**" , "/auth/forgot/**"};
+    private static final String[] PUBLIC_MATCHERS = { "/h2-console/**" ,"api/cargo/**" };
+    private static final String[] PUBLIC_MATCHERS_GET = {
+            "/swagger-ui.html/**",
+    };
+    private static final String[] PUBLIC_MATCHERS_POST = { "/users/**", "/auth/forgot/**" };
 
     @Override
-    protected void configure ( HttpSecurity http ) throws Exception {
-
-        if( Arrays.asList( env.getActiveProfiles( ) )
-                .contains( "test" ) )
-        {
-            http.headers( )
-                    .frameOptions( )
-                    .disable( );
+    protected void configure(HttpSecurity http) throws Exception {
+        if (Arrays.asList(env.getActiveProfiles()).contains("test")) {
+            http.headers().frameOptions().disable();
         }
 
-        http.cors( )
-                .and( )
-                .csrf( )
-                .disable( );
-        http.authorizeRequests( )
-                .antMatchers( HttpMethod.POST , PUBLIC_MATCHERS_POST )
-                .permitAll( )
-
-                .antMatchers( HttpMethod.GET , PUBLIC_MATCHERS_GET )
-                .permitAll( )
-
-                .antMatchers( PUBLIC_MATCHERS )
-                .hasRole("ADMIN")
-                .anyRequest( )
-                .authenticated( );
-        http.addFilter( new JWTAuthenticationFilter( authenticationManager( ) , jwtUtil ) );
-        http.addFilter( new JWTAuthorizationFilter( authenticationManager( ) , jwtUtil , userDetailsService ) );
-        http.sessionManagement( )
-                .sessionCreationPolicy( SessionCreationPolicy.STATELESS );
+        http.cors().and().csrf().disable();
+        http.authorizeRequests()
+                .antMatchers(HttpMethod.POST, PUBLIC_MATCHERS_POST).permitAll()
+                .antMatchers(HttpMethod.GET, PUBLIC_MATCHERS_GET).permitAll()
+                .antMatchers(PUBLIC_MATCHERS).hasRole("ADMIN")
+                .anyRequest().authenticated();
+        http.addFilter(new JWTAuthenticationFilter(authenticationManager(), jwtUtil));
+        http.addFilter(new JWTAuthorizationFilter(authenticationManager(), jwtUtil, userDetailsService));
+        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
 
     @Override
-    public void configure ( AuthenticationManagerBuilder auth ) throws Exception {
-        auth.userDetailsService( userDetailsService )
-                .passwordEncoder( bCryptPasswordEncoder( ) );
+    public void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder());
     }
 
     @Bean
-    CorsConfigurationSource corsConfigurationSource ( ) {
-        CorsConfiguration configuration = new CorsConfiguration( ).applyPermitDefaultValues( );
-        configuration.setAllowedMethods( Arrays.asList( "POST" , "GET" , "PUT" , "DELETE" , "OPTIONS" ) );
-        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource( );
-        source.registerCorsConfiguration( "/**" , configuration );
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration().applyPermitDefaultValues();
+        configuration.setAllowedMethods(Arrays.asList("POST", "GET", "PUT", "DELETE", "OPTIONS"));
+        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
         return source;
     }
 
     @Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder ( ) {
-        return new BCryptPasswordEncoder( );
+    public BCryptPasswordEncoder bCryptPasswordEncoder() {
+        return new BCryptPasswordEncoder();
     }
-    }
-
-
-
+}

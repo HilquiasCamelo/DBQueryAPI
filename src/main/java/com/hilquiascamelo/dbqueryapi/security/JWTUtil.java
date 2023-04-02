@@ -16,15 +16,27 @@ public class JWTUtil {
 
 	@Value("${jwt.expiration}")
 	private Long expiration;
-	
-	public String generateToken(String username) {
+
+	/**
+	 *
+	 * @param email
+	 * @return
+	 */
+	public String generateToken(String email) {
 		return Jwts.builder()
-				.setSubject(username)
+				.setSubject(email)
 				.setExpiration(new Date(System.currentTimeMillis() + expiration))
 				.signWith(SignatureAlgorithm.HS512, secret.getBytes())
 				.compact();
 	}
 	//Validating token
+
+
+	/**
+	 *
+	 * @param token
+	 * @return
+	 */
 	public boolean tokenValido(String token) {
 		Claims claims = getClaims(token);
 		if (claims != null) {
@@ -38,6 +50,11 @@ public class JWTUtil {
 		return false;
 	}
 
+	/**
+	 *
+	 * @param token
+	 * @return
+	 */
 	public String getUsername(String token) {
 		Claims claims = getClaims(token);
 		if (claims != null) {
@@ -45,7 +62,12 @@ public class JWTUtil {
 		}
 		return null;
 	}
-	
+
+	/**
+	 *
+	 * @param token
+	 * @return
+	 */
 	private Claims getClaims(String token) {
 		try {
 			return Jwts.parser().setSigningKey(secret.getBytes()).parseClaimsJws(token).getBody();
