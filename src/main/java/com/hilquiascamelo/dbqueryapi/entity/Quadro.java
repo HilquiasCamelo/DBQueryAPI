@@ -2,6 +2,9 @@ package com.hilquiascamelo.dbqueryapi.entity;
 
 import javax.persistence.*;
 
+/**
+ * @author HilquiasCamelo"
+ */
 @Entity
 @Table (name = "quardo", schema = "Mrh")
 public class Quadro {
@@ -14,6 +17,17 @@ public class Quadro {
     private String  sigla;
     private String  tipo;
 
+    public Quadro ( Long idQuadro ,
+                    boolean ativo ,
+                    String descricao ,
+                    String sigla ,
+                    String tipo ) {
+        this.idQuadro = idQuadro;
+        this.ativo = ativo;
+        this.descricao = descricao;
+        this.sigla = sigla;
+        this.tipo = tipo;
+    }
 
     public Long getIdQuadro ( ) {
         return idQuadro;

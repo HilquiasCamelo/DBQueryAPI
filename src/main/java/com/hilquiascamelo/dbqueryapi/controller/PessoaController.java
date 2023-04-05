@@ -1,4 +1,4 @@
-package com.hilquiascamelo.dbqueryapi.rest;
+package com.hilquiascamelo.dbqueryapi.controller;
 
 import com.hilquiascamelo.dbqueryapi.entity.Pessoa;
 import com.hilquiascamelo.dbqueryapi.entity.dto.PessoaFromDTO;

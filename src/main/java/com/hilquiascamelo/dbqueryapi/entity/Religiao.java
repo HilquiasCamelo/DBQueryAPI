@@ -3,6 +3,9 @@ package com.hilquiascamelo.dbqueryapi.entity;
 
 import javax.persistence.*;
 
+/**
+ * @author HilquiasCamelo"
+ */
 @Entity
 @Table(name = "religiao", schema = "Mrh")
 public class Religiao {
@@ -14,6 +17,13 @@ public class Religiao {
     private Boolean ativo;
 
     private String descricao;
+    public Religiao ( Long id_religiao ,
+                      Boolean ativo ,
+                      String descricao ) {
+        this.id_religiao = id_religiao;
+        this.ativo = ativo;
+        this.descricao = descricao;
+    }
 
     public Long getId_religiao() {
         return id_religiao;

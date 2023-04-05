@@ -1,5 +1,9 @@
 package com.hilquiascamelo.dbqueryapi.entity.enums;
 
+
+/**
+ * @author HilquiasCamelo"
+ */
 public enum Perfil {
     ADMIN(1, "ROLE_ADMIN"),
     CLIENT(2, "ROLE_CLIENT"),

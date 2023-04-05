@@ -2,19 +2,17 @@ package com.hilquiascamelo.dbqueryapi.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hilquiascamelo.dbqueryapi.entity.enums.Perfil;
-import org.springframework.context.annotation.Profile;
 
-import javax.persistence.CollectionTable;
-import javax.persistence.ElementCollection;
-import javax.persistence.FetchType;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-import javax.persistence.*;
 
-
+/**
+ * @author HilquiasCamelo"
+ */
 @Entity
 @Inheritance ( strategy = InheritanceType.JOINED)
 public class Users implements Serializable {

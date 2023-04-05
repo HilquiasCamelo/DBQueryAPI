@@ -2,6 +2,9 @@ package com.hilquiascamelo.dbqueryapi.entity;
 
 import javax.persistence.*;
 
+/**
+ * @author HilquiasCamelo"
+ */
 @Entity
 @Table ( name = "cargo")
 public class Cargo {
@@ -14,6 +17,21 @@ public class Cargo {
     private String descricao;
     private int ordem;
     private String sigla;
+
+
+    public Cargo ( boolean ativo ,
+                   String descricao ,
+                   int ordem ,
+                   String sigla ) {
+        this.ativo = ativo;
+        this.descricao = descricao;
+        this.ordem = ordem;
+        this.sigla = sigla;
+    }
+
+    public Cargo() {
+        // default constructor
+    }
 
     public Long getIdCargo ( ) {
         return id_cargo;

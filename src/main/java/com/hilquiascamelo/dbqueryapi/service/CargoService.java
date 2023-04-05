@@ -1,8 +1,8 @@
 package com.hilquiascamelo.dbqueryapi.service;
 
 import com.hilquiascamelo.dbqueryapi.entity.Cargo;
-import com.hilquiascamelo.dbqueryapi.exceptions.NotFoundException;
 import com.hilquiascamelo.dbqueryapi.exceptions.CargoReferencedException;
+import com.hilquiascamelo.dbqueryapi.exceptions.NotFoundException;
 import com.hilquiascamelo.dbqueryapi.repository.CargoRepository;
 import com.hilquiascamelo.dbqueryapi.service.util.JpaUtils;
 import org.slf4j.Logger;
@@ -10,14 +10,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -35,6 +31,7 @@ public class CargoService {
 
     @Autowired
     JpaUtils jpaUtils;
+
     @PersistenceContext
     private EntityManager entityManager;
 

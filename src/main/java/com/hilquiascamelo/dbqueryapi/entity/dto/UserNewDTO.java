@@ -1,8 +1,8 @@
 package com.hilquiascamelo.dbqueryapi.entity.dto;
 
+import com.hilquiascamelo.dbqueryapi.annotation.CheckEmail;
 import org.hibernate.validator.constraints.Length;
 
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 import java.util.Objects;
@@ -16,7 +16,7 @@ public class UserNewDTO implements Serializable {
 	private String nome;
 
 	@NotEmpty(message="Preenchimento obrigatório")
-	@Email(message="Email inválido")
+	@CheckEmail (message = "Endereço de email inválido")
 	private String email;
 
 	private Integer tipo;

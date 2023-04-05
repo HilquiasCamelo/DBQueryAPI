@@ -2,6 +2,10 @@ package com.hilquiascamelo.dbqueryapi.entity;
 
 import javax.persistence.*;
 
+
+/**
+ * @author HilquiasCamelo"
+ */
 @Entity
 @Table (name = "localidade", schema = "Mrh")
 public class Localidade {
@@ -13,6 +17,19 @@ public class Localidade {
     private String descricao;
     private String sigla;
     private String tipo;
+
+    public Localidade ( Long idLocalidade ,
+                        boolean ativo ,
+                        String descricao ,
+                        String sigla ,
+                        String tipo ) {
+        this.idLocalidade = idLocalidade;
+        this.ativo = ativo;
+        this.descricao = descricao;
+        this.sigla = sigla;
+        this.tipo = tipo;
+    }
+
 
     public Long getIdLocalidade ( ) {
         return idLocalidade;

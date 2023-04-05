@@ -1,6 +1,5 @@
 package com.hilquiascamelo.dbqueryapi.config;
 
-import com.hilquiascamelo.dbqueryapi.service.util.JpaUtils;
 import com.hilquiascamelo.dbqueryapi.service.util.SeedDbService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,7 +26,7 @@ public class DeveloperConfig {
             return false;
         }
 
-        seedDbService.seedDatabase();
+        //seedDbService.seedDatabase();
         return true;
     }
 

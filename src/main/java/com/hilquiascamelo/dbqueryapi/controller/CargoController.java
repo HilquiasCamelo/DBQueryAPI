@@ -1,10 +1,9 @@
-package com.hilquiascamelo.dbqueryapi.rest;
+package com.hilquiascamelo.dbqueryapi.controller;
 
 import com.hilquiascamelo.dbqueryapi.entity.Cargo;
-import com.hilquiascamelo.dbqueryapi.exceptions.NotFoundException;
 import com.hilquiascamelo.dbqueryapi.exceptions.CargoReferencedException;
+import com.hilquiascamelo.dbqueryapi.exceptions.NotFoundException;
 import com.hilquiascamelo.dbqueryapi.service.CargoService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

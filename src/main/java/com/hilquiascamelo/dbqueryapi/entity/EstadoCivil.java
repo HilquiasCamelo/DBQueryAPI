@@ -3,8 +3,12 @@ package com.hilquiascamelo.dbqueryapi.entity;
 
 import javax.persistence.*;
 
+
+/**
+ * @author HilquiasCamelo"
+ */
 @Entity
-@Table(name = "estado_civil", schema = "Mrh")
+@Table(name = "estado_civil")
 public class EstadoCivil {
 
     @Id
@@ -18,5 +22,35 @@ public class EstadoCivil {
     @Column(name = "descricao")
     private String descricao;
 
-    // construtores, getters e setters
+    public EstadoCivil ( Long idEstadoCivil ,
+                         boolean ativo ,
+                         String descricao ) {
+        this.idEstadoCivil = idEstadoCivil;
+        this.ativo = ativo;
+        this.descricao = descricao;
+    }
+
+    public Long getIdEstadoCivil ( ) {
+        return idEstadoCivil;
+    }
+
+    public void setIdEstadoCivil ( Long idEstadoCivil ) {
+        this.idEstadoCivil = idEstadoCivil;
+    }
+
+    public boolean isAtivo ( ) {
+        return ativo;
+    }
+
+    public void setAtivo ( boolean ativo ) {
+        this.ativo = ativo;
+    }
+
+    public String getDescricao ( ) {
+        return descricao;
+    }
+
+    public void setDescricao ( String descricao ) {
+        this.descricao = descricao;
+    }
 }

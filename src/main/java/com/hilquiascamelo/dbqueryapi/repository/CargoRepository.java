@@ -1,5 +1,6 @@
 package com.hilquiascamelo.dbqueryapi.repository;
 
+import com.hilquiascamelo.dbqueryapi.dto.EscolaridadeDto;
 import com.hilquiascamelo.dbqueryapi.entity.Cargo;
 import com.hilquiascamelo.dbqueryapi.exceptions.NotFoundException;
 import org.springframework.data.domain.Page;
@@ -12,7 +13,10 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
+import java.math.BigInteger;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 @Transactional
@@ -22,24 +26,35 @@ public class CargoRepository {
     private EntityManager entityManager;
     private int rowsDeleted;
 
-    public List < Cargo > saveAll ( List < Cargo > cargos ) {
+    public List<Cargo> saveAll(List<Cargo> cargos) {
         String sql = "INSERT INTO cargo (ativo, descricao, ordem, sigla) VALUES (:ativo, :descricao, :ordem, :sigla)";
 
-        Query queryInsert = entityManager.createNativeQuery( sql );
+        Query queryInsert = entityManager.createNativeQuery(sql);
 
-        for( Cargo cargo : cargos ) {
-            queryInsert.setParameter( "ativo" , cargo.isAtivo( ) );
-            queryInsert.setParameter( "descricao" , cargo.getDescricao( ) );
-            queryInsert.setParameter( "ordem" , cargo.getOrdem( ) );
-            queryInsert.setParameter( "sigla" , cargo.getSigla( ) );
-            queryInsert.executeUpdate( );
+        for (Cargo cargo : cargos) {
+            queryInsert.setParameter("ativo", cargo.isAtivo());
+            queryInsert.setParameter("descricao", cargo.getDescricao());
+            queryInsert.setParameter("ordem", cargo.getOrdem());
+            queryInsert.setParameter("sigla", cargo.getSigla());
+            queryInsert.executeUpdate();
+
+            // Obter o ID do último cargo inserido
+            BigInteger
+                    id = (BigInteger) entityManager.createNativeQuery("SELECT LAST_INSERT_ID()").getSingleResult();
+            cargo.setIdCargo(id.longValue());
         }
 
-        List < Cargo >
-                sortedCargos =
-                entityManager.createNativeQuery( "SELECT id_cargo, ativo, descricao, ordem, sigla" +
-                                                 " FROM cargo ORDER BY id_cargo ASC" , Cargo.class )
-                        .getResultList( );
+        List<Long> ids = cargos.stream().map(Cargo::getIdCargo).collect(Collectors.toList());
+
+        if (ids.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        List<Cargo> sortedCargos = entityManager
+                .createNativeQuery("SELECT id_cargo, ativo, descricao, ordem, sigla" +
+                                   " FROM cargo WHERE id_cargo IN :ids  ORDER BY id_cargo ASC", Cargo.class)
+                .setParameter("ids", ids)
+                .getResultList();
 
         return sortedCargos;
     }

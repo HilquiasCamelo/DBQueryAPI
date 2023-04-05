@@ -3,7 +3,6 @@ package com.hilquiascamelo.dbqueryapi.config;
 import com.hilquiascamelo.dbqueryapi.security.JWTAuthenticationFilter;
 import com.hilquiascamelo.dbqueryapi.security.JWTAuthorizationFilter;
 import com.hilquiascamelo.dbqueryapi.security.JWTUtil;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +13,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -38,11 +36,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private JWTUtil jwtUtil;
 
-    private static final String[] PUBLIC_MATCHERS = { "/h2-console/**" ,"api/cargo/**" };
-    private static final String[] PUBLIC_MATCHERS_GET = {
-            "/swagger-ui.html/**",
-    };
-    private static final String[] PUBLIC_MATCHERS_POST = { "/users/**", "/auth/forgot/**" };
+    private static final String[] PUBLIC_MATCHERS = {"/h2-console/**", "/api/cargo/**", "/api/escolaridade/**"};
+    private static final String[] PUBLIC_MATCHERS_GET = {"/swagger-ui.html/**"};
+    private static final String[] PUBLIC_MATCHERS_POST = {"/users/**", "/auth/forgot/**"};
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
