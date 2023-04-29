@@ -14,27 +14,43 @@ import java.util.stream.Collectors;
 
 public class UserValidator implements UserDetails {
 	private static final long serialVersionUID = 1L;
-	
+
 	private Integer id;
 	private String email;
 	private String password;
+	private String userName;
 	private Collection<? extends GrantedAuthority> authorities;
-	
+	private Set<Perfil> perfis;
+
 	public UserValidator() {
 	}
-	
-	public UserValidator (Integer id, String email, String password, Set< Perfil > perfis ) {
+
+	public UserValidator (Integer id,String username,String email, String password, Set< Perfil > perfis ) {
 		super();
 		this.id = id;
 		this.email = email;
+		this.userName = username;
 		this.password = password;
 		this.authorities = perfis.stream().map(x -> new SimpleGrantedAuthority(x.getDescricao())).collect(Collectors.toList());
+		this.perfis = perfis;
 	}
 
 	public Integer getId() {
 		return id;
 	}
-	
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public Set<Perfil> getPerfis() {
+		return perfis;
+	}
+
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		return authorities;
@@ -47,7 +63,7 @@ public class UserValidator implements UserDetails {
 
 	@Override
 	public String getUsername() {
-		return email;
+		return userName;
 	}
 
 	@Override
@@ -69,7 +85,7 @@ public class UserValidator implements UserDetails {
 	public boolean isEnabled() {
 		return true;
 	}
-	
+
 	public boolean hasRole(Perfil profile) {
 		return getAuthorities().contains(new SimpleGrantedAuthority(profile.getDescricao()));
 	}

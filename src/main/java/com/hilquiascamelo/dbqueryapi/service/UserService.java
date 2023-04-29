@@ -30,14 +30,7 @@ public class UserService implements UserServiceInterface {
     @Override
     public Users find(Integer id) {
         Optional<Users> user = repo.findById(id);
-        return user.orElseThrow(() -> new ObjectNotFoundException(
-                new StringBuilder()
-                        .append("Objeto não encontrado! Id: ")
-                        .append(id)
-                        .append(", Tipo: ")
-                        .append(Users.class.getName())
-                        .toString()
-        , UserRepository.class.getName()));
+        return user.orElseThrow( );
     }
 
     @Override

@@ -57,7 +57,11 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                                             FilterChain chain,
                                             Authentication auth) throws IOException, ServletException {
         String username = ((UserValidator) auth.getPrincipal()).getUsername();
-        String token = jwtUtil.generateToken(username);
+        String email =  ((UserValidator) auth.getPrincipal()).getEmail();
+        String AcessNivel = ((UserValidator) auth.getPrincipal()).getAuthorities().iterator().next().getAuthority();
+
+
+        String token = jwtUtil.generateToken(username, email, AcessNivel );
 
         // create cookie object with token
         Cookie cookie = new Cookie("token", token);

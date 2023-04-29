@@ -25,8 +25,7 @@ public class DeveloperConfig {
         if (!"update".equals(strategy)) {
             return false;
         }
-
-        //seedDbService.seedDatabase();
+        seedDbService.seedDatabase();
         return true;
     }
 

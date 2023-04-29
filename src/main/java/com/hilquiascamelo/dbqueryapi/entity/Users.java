@@ -39,8 +39,9 @@ public class Users implements Serializable {
     @CollectionTable ( name = "Perfil")
     private Set < Integer > profiles = new HashSet <>( );
 
-    public Users ( ) {
-        addPerfi( Perfil.USER );
+
+    public Users() {
+        // default constructor
     }
 
     /**
@@ -51,21 +52,14 @@ public class Users implements Serializable {
      * @param type
      * @param situation
      */
-    public Users (
-            Integer idUsers ,
-            String name ,
-            String password ,
-            String email ,
-            Perfil type ,
-            boolean situation
-                 ) {
+    public Users (Integer idUsers, String name, String password, String email, Perfil type, boolean situation) {
         this.idUsers = idUsers;
         this.name = name;
         this.password = password;
         this.email = email;
-        this.type = (type == null) ? null : type.getCod( );
+        this.type = (type == null) ? null : type.getCod();
         this.situation = situation;
-        addPerfi( Perfil.USER );
+        addPerfil(type);
     }
 
     public Integer getIdUsers ( ) {
@@ -114,7 +108,7 @@ public class Users implements Serializable {
                 .collect( Collectors.toSet( ) );
     }
 
-    public void addPerfi ( Perfil perfil ) {
+    public void addPerfil ( Perfil perfil ) {
         profiles.add( perfil.getCod( ) );
     }
 
