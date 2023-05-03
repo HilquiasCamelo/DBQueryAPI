@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import java.nio.charset.StandardCharsets;
@@ -16,7 +17,8 @@ import java.util.Map;
 
 @Component
 public class JWTUtil {
-	
+
+	private static final Logger LOG = Logger.getLogger(JWTUtil.class);
 	@Value("${jwt.secret}")
 	private String secret;
 
@@ -58,22 +60,24 @@ public class JWTUtil {
 			}
 			String claimsString = new String(Base64.getDecoder().decode(tokenParts[1]), StandardCharsets.UTF_8);
 			Map<String, Object> claims = new Gson().fromJson(claimsString, new TypeToken<Map<String, Object>>(){}.getType());
-			String name = (String) claims.get("sub");
-			String email = (String) claims.get("email");
-			String perfil = (String) claims.get("perfil"); // acessa o perfil do mapa de reivindicações
-			long expiration = ((Number) claims.get("exp")).longValue() * 1000; // em milissegundos
+			boolean isRevogado = (Boolean) claims.getOrDefault("aspirado", false); // Verifica se o token está revogado
+			if (isRevogado) {
+				LOG.info("Token revogado !");
+				return false; // Retorna false se o token está revogado
+			}
+			long expiration = ((Number) claims.get("exp")).longValue() * 1000;
 			Date expirationDate = new Date(expiration);
 			Date now = new Date();
-			if (expirationDate.after(now)) {
-				System.out.println("Token válido: name=" + name + ", email=" + email + ", perfil=" + perfil);
-				return true;
-			} else {
-				System.out.println("Token expirado: name=" + name + ", email=" + email + ", perfil=" + perfil);
+			if (expirationDate.before(now)) { // Verifica se o token está expirado
+				LOG.info("Token expirado !");
+				return false;
 			}
+			LOG.info("Token válido !");
+			return true;
 		} catch (IllegalArgumentException e) {
-			System.out.println("Erro ao validar token: " + e.getMessage());
+			LOG.info("Erro ao validar token: " + e.getMessage());
 		} catch (Exception e) {
-			System.out.println("Erro ao validar token: " + e.getClass().getSimpleName() + ": " + e.getMessage());
+			LOG.info("Erro ao validar token: " + e.getClass().getSimpleName() + ": " + e.getMessage());
 		}
 		return false;
 	}
@@ -83,7 +87,7 @@ public class JWTUtil {
 			return Jwts.parser().setSigningKey(secret.getBytes()).parseClaimsJws(token).getBody();
 		}
 		catch (Exception e) {
-			System.out.println("Erro ao obter claims do token: " + e.getMessage());
+			LOG.info("Erro ao obter claims do token: " + e.getMessage());
 			return null;
 		}
 	}
@@ -93,7 +97,7 @@ public class JWTUtil {
 		if (claims != null) {
 			return (String) claims.get("email"); // retorna o email do token
 		} else {
-			System.out.println("Claims é null");
+			LOG.info("Claims é null");
 			return null;
 		}
 	}
